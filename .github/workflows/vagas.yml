@@ -1,0 +1,41 @@
+name: Vagas Bot
+
+on:
+  schedule:
+    - cron: '0 15 * * 1-5'  # Seg-Sex: 8h, 10h, 12h, 14h, 16h, 18h, 20h (BRT)
+    - cron: '0 19 * * 0,6'               # Sáb-Dom: 10h, 14h, 18h (BRT)
+  workflow_dispatch:                             # Permite rodar manualmente pelo GitHub
+
+permissions:
+  contents: write
+
+jobs:
+  buscar-vagas:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Executar bot
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          CHAT_ID_GRUPO: ${{ secrets.CHAT_ID_GRUPO }}
+        run: python main.py
+
+      - name: Salvar banco de dados atualizado
+        continue-on-error: true
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Vagas Bot"
+          git add vagas_rpa.db
+          git diff --staged --quiet || git commit -m "chore: atualiza vagas_gupy.db [skip ci]"
+          git push
