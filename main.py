@@ -21,7 +21,7 @@ except ImportError:
 
 # --- 1. CONFIGURAÇÕES DE AMBIENTE ---
 DIRETORIO_ATUAL = os.path.dirname(os.path.abspath(__file__))
-CAMINHO_BANCO = os.path.join(DIRETORIO_ATUAL, 'vagas_direito_docencia.db')
+CAMINHO_BANCO = os.path.join(DIRETORIO_ATUAL, 'vagas_rpa.db')
 
 
 def carregar_env():
